@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Sheet - {{ sheet_data.sheet_name }}</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            background-color: #ffffff;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .excel-container {
+            display: inline-block;
+            background-color: #ffffff;
+            border: 1px solid #d0d0d0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: auto;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .excel-header {
+            background-color: #f8f9fa;
+            padding: 10px 20px;
+            border-bottom: 1px solid #d0d0d0;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* 테이블 기본 스타일 */
+        .excel-table {
+            border-collapse: collapse;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 16px;
+            width: auto;
+            table-layout: auto;
+            background-color: #ffffff;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .excel-table td, .excel-table th {
+            border: 1px solid #d0d0d0;
+            padding: 6px 8px;
+            vertical-align: top;
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-word;
+            min-width: 60px;
+            max-width: 500px;
+            min-height: 30px;
+            height: auto;
+            box-sizing: border-box;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        /* 기본 셀 스타일 */
+        .excel-table td {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
+        /* 헤더 셀 스타일 */
+        .excel-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* 숫자 셀 스타일 */
+        .excel-table .number-cell {
+            text-align: right;
+        }
+        
+        /* 날짜 셀 스타일 */
+        .excel-table .date-cell {
+            text-align: center;
+        }
+        
+        /* 병합 셀 스타일 */
+        .excel-table .merged-cell {
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* 사용자 정의 CSS 스타일 */
+        {{ css_styles | safe }}
+        
+        /* 반응형 디자인 */
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            .excel-container {
+                box-shadow: none;
+                border: none;
+            }
+            
+            .excel-header {
+                display: none;
+            }
+        }
+        
+        /* 고해상도 디스플레이 지원 */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .excel-table {
+                font-size: 18px;
+            }
+            .excel-table td, .excel-table th {
+                font-size: 18px;
+                padding: 8px 10px;
+                min-height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="excel-container">
+        <div class="excel-header">
+            Excel Sheet: {{ sheet_data.sheet_name }}
+            {% if sheet_data.range %}
+            <span style="font-weight: normal; color: #666;">({{ sheet_data.range }})</span>
+            {% endif %}
+        </div>
+        
+        <div class="excel-content">
+            {{ table_html | safe }}
+        </div>
+    </div>
+    
+    <script>
+        // 페이지 로드 후 테이블 최적화
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.querySelector('.excel-table');
+            if (table) {
+                // 셀 내용에 따라 자동 높이 조정
+                const cells = table.querySelectorAll('td, th');
+                cells.forEach(cell => {
+                    if (cell.textContent && cell.textContent.length > 50) {
+                        cell.style.height = 'auto';
+                        cell.style.minHeight = '30px';
+                    }
+                });
+                
+                // 컨테이너가 테이블 크기에 맞게 조정
+                const container = document.querySelector('.excel-container');
+                if (container) {
+                    container.style.width = 'auto';
+                    container.style.maxWidth = '100%';
+                    container.style.overflowX = 'auto';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
